@@ -1,0 +1,27 @@
+{
+    "name": "nbish11/meek-http",
+    "description": "A simple framework for working with HTTP requests and responses in PHP.",
+    "require-dev": {
+        "phpunit/phpunit": "^4.8"
+    },
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Nathan Bishop",
+            "email": "nbish11@hotmail.com"
+        }
+    ],
+    "require": {
+        "php": "^5.5 || ^7.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Meek\\Http\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Meek\\Http\\Tests\\": "tests/"
+        }
+    }
+}
