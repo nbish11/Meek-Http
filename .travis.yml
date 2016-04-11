@@ -20,3 +20,7 @@ matrix:
     allow_failures:
         - php: hhvm
     fast_finish: true
+
+addons:
+    code_climate:
+        repo_token: fd7a26b6b37408e6aec6f0a008f1a365dc388fcc9edc9ff3e2cae10a52341160
