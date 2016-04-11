@@ -25,4 +25,10 @@ ratings:
     - "**.php"
 
 exclude_paths:
+  - LICENSE
+  - README.md
+  - composer.json
+  - composer.lock
+  - phpunit.xml
+  - codeclimate.sh
   - tests/
