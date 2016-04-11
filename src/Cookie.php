@@ -8,6 +8,14 @@ use DateTimeInterface;
 
 class Cookie
 {
+    protected $name;
+    protected $value;
+    protected $expire;
+    protected $path;
+    protected $domain;
+    protected $secure;
+    protected $httpOnly;
+    
     public function __construct(
         $name,
         $value = '',
