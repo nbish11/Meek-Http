@@ -15,13 +15,11 @@ install:
     - composer install --prefer-source --no-interaction --dev
 
 script:
-  - vendor/bin/phpunit
-  - vendor/bin/phpunit --coverage-clover build/logs/clover.xml
+  - vendor/bin/phpunit --coverage-clover=coverage.clover
 
 after_script:
-  - vendor/bin/test-reporter
   - wget https://scrutinizer-ci.com/ocular.phar
-  - php ocular.phar code-coverage:upload --format=php-clover build/logs/clover.xml
+  - php ocular.phar code-coverage:upload --format=php-clover coverage.clover
 
 matrix:
     allow_failures:
