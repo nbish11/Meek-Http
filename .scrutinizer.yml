@@ -8,6 +8,9 @@ checks:
     code_rating: true
 
 tools:
+  php_code_coverage:
+    enabled: true
+    test_command: vendor/bin/phpunit -c
   external_code_coverage: true
   php_analyzer: true
   php_changetracking: true

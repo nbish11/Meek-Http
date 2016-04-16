@@ -15,11 +15,11 @@ install:
   - composer install --no-interaction --prefer-source
 
 script:
-  - vendor/bin/phpunit --colors --coverage-clover=coverage.clover
+  - vendor/bin/phpunit --colors
 
 after_script:
   - test "5.6" == "${TRAVIS_PHP_VERSION}" && wget https://scrutinizer-ci.com/ocular.phar
-  - test -f ocular.phar && php ocular.phar code-coverage:upload --format=php-clover coverage.clover
+  - test -f ocular.phar && php ocular.phar code-coverage:upload --format=php-clover clover.xml
 
 matrix:
   allow_failures:
