@@ -2,8 +2,6 @@ filter:
   paths: [src/*]
   excluded_paths: [example/*, vendor/*, tests/*]
 
-build: false
-
 tools:
   external_code_coverage: true
   php_mess_detector: true
