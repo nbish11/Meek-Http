@@ -1,17 +1,20 @@
 filter:
-  paths: [src/*]
-  excluded_paths: [example/*, vendor/*, tests/*]
+  excluded_paths:
+    - tests/*
+    - example/*
+
+checks:
+  php:
+    code_rating: true
 
 tools:
   external_code_coverage: true
+  php_analyzer: true
+  php_changetracking: true
+  php_code_sniffer:
+    config:
+      standard: "PSR2"
+  php_cpd: true
   php_mess_detector: true
-  php_code_sniffer: true
-  sensiolabs_security_checker: true
-  php_code_coverage: true
   php_pdepend: true
-  php_loc:
-    enabled: true
-    excluded_dirs: [example, vendor, tests]
-  php_cpd:
-    enabled: true
-    excluded_dirs: [example, vendor, tests]
+  sensiolabs_security_checker: true
