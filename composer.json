@@ -13,7 +13,8 @@
         }
     ],
     "require": {
-        "php": "^5.5 || ^7.0"
+        "php": "^5.5 || ^7.0",
+        "psr/http-message": "^1.0"
     },
     "autoload": {
         "psr-4": {
@@ -22,7 +23,7 @@
     },
     "autoload-dev": {
         "psr-4": {
-            "Meek\\Http\\Tests\\": "tests/"
+            "Meek\\Http\\": "tests/"
         }
     }
 }

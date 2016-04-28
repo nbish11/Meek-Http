@@ -2,51 +2,39 @@
 
 namespace Meek\Http;
 
-/**
- * A class for manipulating URI's.
- *
- * @author Nathan Bishop <nbish11@hotmail.com>
- * @copyright Copyright (c) 2016, Nathan Bishop
- * @package Meek\Http
- * @version 0.8.7
- * @license MIT
- */
-class Uri
+use Psr\Http\Message\UriInterface as PsrHttpUri;
+
+ /**
+  *A class for manipulating URI's.
+  *
+  * @version 0.1.0
+  * @author Nathan Bishop (nbish11)
+  * @copyright 2016 Nathan Bishop
+  * @license MIT
+  */
+class Uri implements PsrHttpUri
 {
-    private $scheme;
-    private $userInfo;
-    private $host;
-    private $port;
-    private $path;
-    private $query;
-    private $fragment;
+    protected $scheme;
+    protected $userInfo;
+    protected $host;
+    protected $port;
+    protected $path;
+    protected $query;
+    protected $fragment;
 
-    public function __construct($uri = null)
-    {
-        if (!is_array($uri)) {
-            $uri = static::parse((string) $uri);
-        }
+    protected static $allowedSchemes = [];
 
-        $parsedUri = array_fill_keys([
-            'scheme', 'host', 'port', 'user', 'pass', 'path', 'query', 'fragment'
-        ], '');
-
-        $uri = array_merge($parsedUri, $uri);
-
-        $this->setScheme($uri['scheme']);
-        $this->setUserInfo($uri['user'], $uri['pass']);
-        $this->setHost($uri['host']);
-        $this->setPort($uri['port'] === '' ? null : (integer) $uri['port']);
-        $this->setPath($uri['path']);
-        $this->setQuery($uri['query']);
-        $this->setFragment($uri['fragment']);
-    }
-
+    /**
+     * {@inheritdoc}
+     */
     public function getScheme()
     {
         return (string) $this->scheme;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getAuthority()
     {
         $authority = '';
@@ -64,16 +52,25 @@ class Uri
         return $authority;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getUserInfo()
     {
         return (string) $this->userInfo;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getHost()
     {
         return (string) $this->host;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPort()
     {
         // If a port is present, and it is non-standard for the current scheme,
@@ -84,96 +81,217 @@ class Uri
             return null;
         }
 
-        return $this->port;
+        return (integer) $this->port;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getPath()
     {
         return (string) $this->path;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getQuery()
     {
         return (string) $this->query;
     }
 
+    /**
+     * {@inheritdoc}
+     */
     public function getFragment()
     {
         return (string) $this->fragment;
     }
 
-    public function setScheme($scheme)
+    /**
+     * {@inheritdoc}
+     */
+    public function withScheme($scheme)
     {
-        $this->scheme = $scheme;
+        $instance = clone $this;
+        $instance->scheme = $scheme;
 
-        return $this;
+        return $instance;
     }
 
-    public function setUserInfo($user, $pass = null)
+    /**
+     * {@inheritdoc}
+     */
+    public function withUserInfo($user, $pass = null)
     {
+        $instance = clone $this;
+
         if ($pass) {
             $user = $user . ':' . $pass;
         }
 
-        $this->userInfo = $user;
+        $instance->userInfo = $user;
 
-        return $this;
+        return $instance;
     }
 
-    public function setHost($host)
+    /**
+     * {@inheritdoc}
+     */
+    public function withHost($host)
     {
-        $this->host = $host;
+        $instance = clone $this;
+        $instance->host = $host;
 
-        return $this;
+        return $instance;
     }
 
-    public function setPort($port)
+    /**
+     * {@inheritdoc}
+     */
+    public function withPort($port)
     {
-        $this->port = $port;
+        $instance = clone $this;
+        $instance->port = $port;
 
-        return $this;
+        return $instance;
     }
 
-    public function setPath($path)
+    /**
+     * {@inheritdoc}
+     */
+    public function withPath($path)
     {
-        $this->path = $path;
+        $instance = clone $this;
+        $instance->path = $path;
 
-        return $this;
+        return $instance;
     }
 
-    public function setQuery($query)
+    /**
+     * {@inheritdoc}
+     */
+    public function withQuery($query)
     {
-        $this->query = $query;
+        $instance = clone $this;
+        $instance->query = $query;
 
-        return $this;
+        return $instance;
     }
 
-    public function setFragment($fragment)
+    /**
+     * {@inheritdoc}
+     */
+    public function withFragment($fragment)
     {
-        $this->fragment = $fragment;
+        $instance = clone $this;
+        $instance->fragment = $fragment;
 
-        return $this;
+        return $instance;
     }
 
-    public static function createFromRequest()
+    /**
+     * {@inheritdoc}
+     */
+    public function __toString()
     {
-        return new static([
-            'scheme' => $_SERVER['REQUEST_SCHEME'],
-            'host' => $_SERVER['SERVER_NAME'],
-            'port' => $_SERVER['SERVER_PORT'],
-            'user' => isset($_SERVER['PHP_AUTH_USER']) ? $_SERVER['PHP_AUTH_USER'] : '',
-            'pass' => isset($_SERVER['PHP_AUTH_PW']) ? $_SERVER['PHP_AUTH_PW'] : '',
-            'path' => strstr($_SERVER['REQUEST_URI'], '?', true) ?: $_SERVER['REQUEST_URI'],
-            'query' => $_SERVER['QUERY_STRING']
+        return static::build([
+            'scheme' => $this->getScheme(),
+            'authority' => $this->getAuthority(),
+            'path' => $this->getPath(),
+            'query' => $this->getQuery(),
+            'fragment' => $this->getFragment()
         ]);
     }
 
-    protected static function parse($uri)
+    /**
+     * [createFromRequest description]
+     *
+     * @param array $server [description]
+     * @return self [description]
+     */
+    public static function createFromRequest(array $server)
     {
-        return parse_url($uri);
+        return static::createFromArray([
+            'scheme' => $server['REQUEST_SCHEME'],
+            'host' => $server['SERVER_NAME'],
+            'port' => $server['SERVER_PORT'],
+            'user' => isset($server['PHP_AUTH_USER']) ? $server['PHP_AUTH_USER'] : '',
+            'pass' => isset($server['PHP_AUTH_PW']) ? $server['PHP_AUTH_PW'] : '',
+            'path' => strstr($server['REQUEST_URI'], '?', true) ?: $server['REQUEST_URI'],
+            'query' => $server['QUERY_STRING']
+        ]);
     }
 
-    // http://tools.ietf.org/html/rfc3986#section-5.3
+    /**
+     * [createFromString description]
+     *
+     * @param string $uri [description]
+     * @return self [description]
+     */
+    public static function createFromString($uri)
+    {
+        return static::createFromArray(static::parse($uri));
+    }
+
+    /**
+     * [createFromArray description]
+     *
+     * @param array $uri [description]
+     * @return self [description]
+     */
+    public static function createFromArray(array $uri)
+    {
+        $uri += [
+            'scheme' => '',
+            'user' => '',
+            'pass' => '',
+            'host' => '',
+            'port' => null,
+            'query' => '',
+            'fragment' => ''
+        ];
+
+        return (new static())
+            ->withScheme($uri['scheme'])
+            ->withUserInfo($uri['user'], $uri['pass'])
+            ->withHost($uri['host'])
+            ->withPort($uri['port'])
+            ->withPath($uri['path'])
+            ->withQuery($uri['query'])
+            ->withFragment($uri['fragment']);
+    }
+
+    /**
+     * [parse description]
+     *
+     * @param string $uri [description]
+     * @return array [description]
+     */
+    protected static function parse($uri)
+    {
+        $uri = (string) $uri;
+
+        if (!is_string($uri) || empty($uri)) {
+            throw new InvalidArgumentException('Invalid uri.');
+        }
+
+        $uri = parse_url((string) $uri);
+
+        if ($uri === false) {
+            throw new InvalidArgumentException('Malformed uri.');
+        }
+
+        return $uri;
+    }
+
+    /**
+     * [compile description]
+     *
+     * @link http://tools.ietf.org/html/rfc3986#section-5.3
+     * @param array $parts [description]
+     * @return string [description]
+     */
     protected static function compile(array $parts)
     {
         $result = '';
@@ -203,6 +321,12 @@ class Uri
         return $result;
     }
 
+    /**
+     * [build description]
+     *
+     * @param array $parsedUri [description]
+     * @return string [description]
+     */
     protected static function build(array $parsedUri)
     {
         $uri = '';
@@ -239,16 +363,5 @@ class Uri
         }
 
         return $uri;
-    }
-
-    public function __toString()
-    {
-        return static::build([
-            'scheme' => $this->getScheme(),
-            'authority' => $this->getAuthority(),
-            'path' => $this->getPath(),
-            'query' => $this->getQuery(),
-            'fragment' => $this->getFragment()
-        ]);
     }
 }

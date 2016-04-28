@@ -1,11 +1,8 @@
 <?php
 
-namespace Meek\Http\Tests;
+namespace Meek\Http;
 
-use PHPUnit_Framework_TestCase;
-use Meek\Http\Status;
-
-class StatusTest extends PHPUnit_Framework_TestCase
+class StatusTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @dataProvider invalidStatusCodes
